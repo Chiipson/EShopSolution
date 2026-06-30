@@ -17,19 +17,14 @@ namespace EShopData.Data
         public DbSet<Product> Products { get; set; }
         public DbSet<Tag> Tags { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            //TODO: connection
+        public EShopDbContext(DbContextOptions<EShopDbContext> options) 
+            : base(options)
+        {            
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<UserInfo>().HasKey(ui => ui.UserId);
-
-            modelBuilder.Entity<User>()
-                .HasOne(u => u.UserInfo)
-                .WithOne(ui => ui.User)
-                .HasForeignKey<UserInfo>(ui => ui.UserId);
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(EShopDbContext).Assembly);
         }
     }
 }
