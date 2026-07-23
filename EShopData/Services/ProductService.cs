@@ -16,16 +16,25 @@ namespace EShopData.Services
             _context = context;
         }
 
-        public IEnumerable<ListProductDto> GetAll() =>
+        public List<ProductsNamesListDto> GetProductList() =>
             _context.Products.Select(p =>
-                new ListProductDto(
+                new ProductsNamesListDto(
+                    p.Id,
+                    p.Name
+                    ))
+            .ToList();
+
+        public ProductDetailsDto GetProductDetails(int id) =>
+           _context.Products
+            .Where(p => p.Id == id)
+            .Select(p =>
+                new ProductDetailsDto(
                     p.Name,
                     p.Price,
                     p.Category.Name,
                     p.Producer.Name,
                     p.Tags.Select(t => t.Name)
                     ))
-                .ToList();
-
+            .First();
     }
 }
