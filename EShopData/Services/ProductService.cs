@@ -1,4 +1,5 @@
 ﻿using EShopData.Data;
+using EShopData.DTOs;
 using EShopData.Entities;
 using System;
 using System.Collections.Generic;
@@ -15,9 +16,16 @@ namespace EShopData.Services
             _context = context;
         }
 
-        public IEnumerable<Product> GetAll()
-        {
-            return _context.Products.ToList();
-        }
+        public IEnumerable<ListProductDto> GetAll() =>
+            _context.Products.Select(p =>
+                new ListProductDto(
+                    p.Name,
+                    p.Price,
+                    p.Category.Name,
+                    p.Producer.Name,
+                    p.Tags.Select(t => t.Name)
+                    ))
+                .ToList();
+
     }
 }
