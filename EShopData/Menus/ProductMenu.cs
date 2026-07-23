@@ -59,6 +59,7 @@ namespace EShopData.Menus
 
             if(option == 0)
             {
+                cartService.Add(new AddToCartDto(product.id, product.Name, product.Price));
             }
         }
     }

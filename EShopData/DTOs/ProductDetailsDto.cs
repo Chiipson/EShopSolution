@@ -5,6 +5,7 @@ using System.Text;
 namespace EShopData.DTOs
 {
     public record ProductDetailsDto(
+        int id,
         string Name,
         decimal Price,
         string CategoryName,

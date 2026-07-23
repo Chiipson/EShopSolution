@@ -29,6 +29,7 @@ namespace EShopData.Services
             .Where(p => p.Id == id)
             .Select(p =>
                 new ProductDetailsDto(
+                    p.Id,
                     p.Name,
                     p.Price,
                     p.Category.Name,
