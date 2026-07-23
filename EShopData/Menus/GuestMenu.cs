@@ -5,46 +5,45 @@ using System.Text;
 
 namespace EShopData.Menus
 {
-    public class MainMenu
+    public class GuestMenu
     {
         private readonly ConsoleHelper consoleHelper;
-        private readonly GuestMenu guestMenu;
+        private readonly ProductMenu productMenu;
 
-        public MainMenu(ConsoleHelper consoleHelper, GuestMenu guestMenu)
+        public GuestMenu(ConsoleHelper consoleHelper, ProductMenu productMenu)
         {
             this.consoleHelper = consoleHelper;
-            this.guestMenu = guestMenu;
+            this.productMenu = productMenu;
         }
+
         public void Show()
         {
             var menuOptions = new string[]
             {
-               "Login",
-               "Register",
-               "Continue as a Guest",
-               "Exit",
+               "Show all products",
+               "Search products",
+               "View cart",
+               "Go back",
             };
+
             while (true)
             {
-                var selected = consoleHelper.ShowArrowMenu("Eshop Appliccation", menuOptions);
+                var selected = consoleHelper.ShowArrowMenu("Welcome, Guest", menuOptions);
 
                 switch (selected)
                 {
                     case 0:
-                        //TODO: login menu
+                        productMenu.ShowAllProducts();
                         break;
                     case 1:
                         //TODO: register menu
                         break;
                     case 2:
-                        guestMenu.Show();
                         break;
                     case 3:
-                        Console.WriteLine("Exit");
                         return;
                 }
             }
-
         }
     }
 }
