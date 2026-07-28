@@ -32,5 +32,20 @@ namespace EShopData.Services
         {
             return cartItems;
         }
+
+        public void Clear()
+        {
+            cartItems.Clear();
+        }
+
+        public void RemoveProduct(int id)
+        {
+            var item = cartItems.Find(ci=>ci.ProductId == id);
+
+            if (item != null)
+            {
+                cartItems.Remove(item);
+            }
+        }
     }
 }

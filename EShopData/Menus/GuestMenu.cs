@@ -9,11 +9,13 @@ namespace EShopData.Menus
     {
         private readonly ConsoleHelper consoleHelper;
         private readonly ProductMenu productMenu;
+        private readonly CartMenu cartMenu;
 
-        public GuestMenu(ConsoleHelper consoleHelper, ProductMenu productMenu)
+        public GuestMenu(ConsoleHelper consoleHelper, ProductMenu productMenu, CartMenu cartMenu)
         {
             this.consoleHelper = consoleHelper;
             this.productMenu = productMenu;
+            this.cartMenu = cartMenu;
         }
 
         public void Show()
@@ -23,7 +25,7 @@ namespace EShopData.Menus
                "Show all products",
                "Search products",
                "View cart",
-               "Go back",
+               "Back",
             };
 
             while (true)
@@ -39,6 +41,7 @@ namespace EShopData.Menus
                         //TODO: register menu
                         break;
                     case 2:
+                        cartMenu.Show();
                         break;
                     case 3:
                         return;

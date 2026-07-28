@@ -28,7 +28,7 @@ namespace EShopData.Menus
                 "Products",
                 products
                     .Select(p => $"{p.Id}.{p.Name}")
-                    .Append("Go back")
+                    .Append("Back")
                     .ToArray()
                 );
 
