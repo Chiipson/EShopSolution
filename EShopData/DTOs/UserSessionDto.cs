@@ -7,8 +7,8 @@ namespace EShopData.DTOs
 {
     public record UserSessionDto(
         int Id,
-        string Name,
-        string Surname,
+        string FirstName,
+        string LastName,
         Role Role
         );
 }
