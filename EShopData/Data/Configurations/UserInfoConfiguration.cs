@@ -7,7 +7,7 @@ using System.Text;
 
 namespace EShopData.Data.Configurations
 {
-    public class UserConfiguration : IEntityTypeConfiguration<UserInfo>
+    public class UserInfoConfiguration : IEntityTypeConfiguration<UserInfo>
     {
         public void Configure(EntityTypeBuilder<UserInfo> builder)
         {
