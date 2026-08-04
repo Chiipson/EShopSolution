@@ -1,4 +1,5 @@
 ﻿using EShopData.Common;
+using EShopData.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,43 +9,31 @@ namespace EShopData.Menus
     public class MainMenu
     {
         private readonly ConsoleHelper consoleHelper;
-        private readonly GuestMenu guestMenu;
+        private readonly UserMenu userMenu;
 
-        public MainMenu(ConsoleHelper consoleHelper, GuestMenu guestMenu)
+        public MainMenu(ConsoleHelper consoleHelper, UserMenu userMenu)
         {
             this.consoleHelper = consoleHelper;
-            this.guestMenu = guestMenu;
+            this.userMenu = userMenu;
         }
         public void Show()
         {
-            var menuOptions = new string[]
+            var exit = false;
+
+            var menu = new List<MenuItem>
             {
-               "Login",
-               "Register",
-               "Continue as a Guest",
-               "Exit",
+               new MenuItem("Login",()=>{ }),
+               new MenuItem("Register", ()=>{ }),
+               new MenuItem("Continue as a Guest", userMenu.Show),
+               new MenuItem("Exit", ()=> exit=true)
             };
-            while (true)
+
+            while (!exit)
             {
-                var selected = consoleHelper.ShowArrowMenu("Eshop Appliccation", menuOptions);
+                var selected = consoleHelper.ShowArrowMenu("Eshop Appliccation", menu.Select(mi=>mi.Name).ToArray());
 
-                switch (selected)
-                {
-                    case 0:
-                        //TODO: login menu
-                        break;
-                    case 1:
-                        //TODO: register menu
-                        break;
-                    case 2:
-                        guestMenu.Show();
-                        break;
-                    case 3:
-                        Console.WriteLine("Exit");
-                        return;
-                }
+                menu[selected].Action();
             }
-
         }
     }
 }

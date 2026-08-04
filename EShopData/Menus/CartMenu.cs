@@ -21,7 +21,9 @@ namespace EShopData.Menus
 
         public void Show()
         {
-            while (true)
+            var exit = false;
+
+            while (!exit)
             {
                 var cartItems = cartService.GetAll();
 
@@ -32,24 +34,19 @@ namespace EShopData.Menus
                     output.AppendLine($"{i + 1}.{FormatCartItem(cartItems[i])}");
                 }
 
-                string[] options = cartItems.Count != 0 ? ["Check out", "Remove product", "Clear cart", "Back"] : ["Back"];
+                var menu = new List<MenuItem>();
 
-                var result = consoleHelper.ShowArrowMenu(output.ToString(), options);
-
-                switch (result)
+                if(cartItems.Count != 0)
                 {
-                    case 0 when cartItems.Count > 0:
-                        Checkout();
-                        break;
-                    case 1:
-                        RemoveProduct();
-                        break;
-                    case 2:
-                        ClearCart();
-                        break;
-                    default:
-                        return;
+                    menu.Add(new MenuItem("Check out", Checkout));
+                    menu.Add(new MenuItem("Remove product", RemoveProduct));
+                    menu.Add(new MenuItem("Clear cart", ClearCart));
                 }
+                menu.Add(new MenuItem("Back", ()=> exit=true));
+
+                var selected = consoleHelper.ShowArrowMenu(output.ToString(), menu.Select(mi=>mi.Name).ToArray());
+
+                menu[selected].Action();
             }
         }
 
