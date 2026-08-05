@@ -1,5 +1,7 @@
 ﻿using EShopData.Data;
 using EShopData.DTOs;
+using EShopData.Entities;
+using EShopData.Enums;
 using EShopData.Security;
 using System;
 using System.Collections.Generic;
@@ -23,14 +25,14 @@ namespace EShopData.Services
         public bool LogIn(string email, string password)
         {
             var user = context.Users
-                .FirstOrDefault(u=>u.Email== email);
+                .FirstOrDefault(u => u.Email == email);
 
             if (user == null)
             {
                 return false;
             }
 
-            if(!passwordHasher.Verify(password, user.PasswordHash))
+            if (!passwordHasher.Verify(password, user.PasswordHash))
             {
                 return false;
             }
@@ -52,9 +54,30 @@ namespace EShopData.Services
             session.Logout();
         }
 
-        public void Register()
+        public bool Register(AddUserDto userData)
         {
+            if (context.Users.FirstOrDefault(u => u.Email == userData.Email) != null)
+            {
+                return false;
+            }
 
+            var user = new User()
+            {
+                Email = userData.Email,
+                PasswordHash = passwordHasher.Hash(userData.password),
+                Role = Role.User,
+                CreatedAt = DateTime.UtcNow,
+                UserInfo = new UserInfo
+                {
+                    FirstName = userData.FirstName,
+                    LastName = userData.LastName
+                }
+            };
+
+            context.Users.Add(user);
+            context.SaveChanges();
+
+            return true;
         }
     }
 }

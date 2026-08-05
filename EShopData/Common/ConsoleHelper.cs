@@ -54,5 +54,11 @@ namespace EShopData.Common
                 }
             }
         }
+
+        public string GetString(string message)
+        {
+            Console.Write(message);
+            return Console.ReadLine();
+        }
     }
 }

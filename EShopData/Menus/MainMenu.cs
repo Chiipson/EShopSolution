@@ -22,8 +22,8 @@ namespace EShopData.Menus
 
             var menu = new List<MenuItem>
             {
-               new MenuItem("Login",()=>{ }),
-               new MenuItem("Register", ()=>{ }),
+               new MenuItem("Login", userMenu.Login),
+               new MenuItem("Register", userMenu.Register),
                new MenuItem("Continue as a Guest", userMenu.Show),
                new MenuItem("Exit", ()=> exit=true)
             };

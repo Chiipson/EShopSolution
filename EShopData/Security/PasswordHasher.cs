@@ -9,7 +9,7 @@ namespace EShopData.Security
     {
         public bool Verify(string password, string userPasswordHash)
         {
-            return BCrypt.Net.BCrypt.Verify(userPasswordHash,password);
+            return BCrypt.Net.BCrypt.Verify(password,userPasswordHash);
         }
 
         public string Hash(string password)
