@@ -59,7 +59,7 @@ namespace EShopData.Menus
 
             if(option == 0)
             {
-                cartService.Add(product.id);
+                cartService.Add(product.id, 1);
             }
         }
     }

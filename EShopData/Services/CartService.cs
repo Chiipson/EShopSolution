@@ -21,47 +21,73 @@ namespace EShopData.Services
             this.session = session;
         }
 
-        public void Add(int productId)
+        public void Add(int productId, int amount)
         {
-            if (!session.IsLoggenIn())
+            if (session.IsLoggenIn())
             {
-                throw new Exception();
-            }
+                var cart = context.Carts
+                    .Include(c => c.CartItems)
+                    .FirstOrDefault(c => c.UserId == session.User.Id);
 
-            var cart = context.Carts
-                .Include(c => c.CartItems)
-                .FirstOrDefault(c => c.UserId == session.User.Id);
-
-            if (cart == null)
-            {
-                cart = new Cart
+                if (cart == null)
                 {
-                    UserId = session.User.Id,
-                    CartItems = new List<CartItem>()
-                };
-                context.Carts.Add(cart);
-            }
+                    cart = new Cart
+                    {
+                        UserId = session.User.Id,
+                        CartItems = new List<CartItem>()
+                    };
+                    context.Carts.Add(cart);
+                }
 
-            var cartItem = cart.CartItems.FirstOrDefault(ci => ci.ProductId == productId);
+                var cartItem = cart.CartItems.FirstOrDefault(ci => ci.ProductId == productId);
 
-            if (cartItem == null)
-            {
-                cart.CartItems.Add(new CartItem()
+                if (cartItem == null)
                 {
-                    ProductId = productId,
-                    Quantity = 1
-                });
+                    cart.CartItems.Add(new CartItem()
+                    {
+                        ProductId = productId,
+                        Quantity = amount
+                    });
+                }
+                else
+                {
+                    cartItem.Quantity+= amount;
+                }
+
+                context.SaveChanges();
             }
             else
             {
-                cartItem.Quantity++;
-            }
+                var item = session.GuestCart.Find(ci => ci.ProductId == productId);
 
-            context.SaveChanges();
+                if (item == null)
+                {
+                    item = new GuestCartItem { ProductId = productId, Quantity = 1 };
+                    session.GuestCart.Add(item);
+                }
+                else
+                {
+                    item.Quantity++;
+                }
+            }
         }
 
         public List<CartItemDetailsDto> GetCartItemsDetails()
         {
+            if (!session.IsLoggenIn())
+            {
+                return session.GuestCart.Join(
+                    context.Products,
+                    item => item.ProductId,
+                    product => product.Id,
+                    (item, product) => new CartItemDetailsDto(
+                        item.ProductId,
+                        product.Name,
+                        item.Quantity,
+                        product.Price
+                        )).ToList();
+            }
+
             var cart = context.Carts
                 .Include(c => c.CartItems)
                     .ThenInclude(ci => ci.Product)
@@ -84,49 +110,70 @@ namespace EShopData.Services
         {
             if (!session.IsLoggenIn())
             {
-                throw new Exception();
+                var cart = context.Carts
+                    .Include(c => c.CartItems)
+                    .FirstOrDefault(c => c.UserId == session.User.Id);
+
+                if (cart == null)
+                {
+                    return;
+                }
+
+                context.CartItems.RemoveRange(cart.CartItems);
+
+                context.SaveChanges();
             }
-
-            var cart = context.Carts
-                .Include(c => c.CartItems)
-                .FirstOrDefault(c => c.UserId == session.User.Id);
-
-            if(cart == null)
+            else
             {
-                return;
+                session.GuestCart.Clear();
             }
-
-            context.CartItems.RemoveRange(cart.CartItems);
-
-            context.SaveChanges();
         }
 
         public void RemoveProduct(int productId)
         {
-            if (!session.IsLoggenIn())
+            if (session.IsLoggenIn())
             {
-                throw new Exception();
+                var cart = context.Carts
+                    .Include(c => c.CartItems)
+                    .FirstOrDefault(c => c.UserId == session.User.Id);
+
+                if (cart == null)
+                {
+                    return;
+                }
+
+                var cartItem = cart.CartItems.FirstOrDefault(ci => ci.ProductId == productId);
+
+                if (cartItem == null)
+                {
+                    return;
+                }
+
+                context.CartItems.Remove(cartItem);
+
+                context.SaveChanges();
+            }
+            else
+            {
+                var item = session.GuestCart.Find(ci => ci.ProductId == productId);
+
+                if (item == null)
+                {
+                    return;
+                }
+
+                session.GuestCart.Remove(item);
+            }
+        }
+
+        public void MergeUserAndGuestcarts()
+        {
+            foreach (var item in session.GuestCart)
+            {
+                Add(item.ProductId, item.Quantity);
             }
 
-            var cart = context.Carts
-                .Include(c => c.CartItems)
-                .FirstOrDefault(c => c.UserId == session.User.Id);
-
-            if (cart == null)
-            {
-                return;
-            }
-
-            var cartItem = cart.CartItems.FirstOrDefault(ci => ci.ProductId == productId);
-
-            if( cartItem == null)
-            {
-                return;
-            }
-
-            context.CartItems.Remove(cartItem);
-            
-            context.SaveChanges();
+            session.GuestCart.Clear();
         }
     }
 }

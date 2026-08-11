@@ -14,12 +14,19 @@ namespace EShopData.Services
         private readonly EShopDbContext context;
         private readonly PasswordHasher passwordHasher;
         private readonly UserSession session;
+        private readonly CartService cartService;
 
-        public UserService(EShopDbContext context, PasswordHasher passwordHasher, UserSession session)
+        public UserService(
+            EShopDbContext context, 
+            PasswordHasher passwordHasher, 
+            UserSession session, 
+            CartService cartService
+            )
         {
             this.context = context;
             this.passwordHasher = passwordHasher;
             this.session = session;
+            this.cartService = cartService;
         }
 
         public bool LogIn(string email, string password)
@@ -46,10 +53,12 @@ namespace EShopData.Services
                 user.Role
                 ));
 
+            cartService.MergeUserAndGuestcarts();
+
             return true;
         }
 
-        public void LogOut()
+        public void Logout()
         {
             session.Logout();
         }
