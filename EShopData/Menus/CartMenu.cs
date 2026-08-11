@@ -1,4 +1,5 @@
 ﻿using EShopData.Common;
+using EShopData.DTOs;
 using EShopData.Models;
 using EShopData.Services;
 using Microsoft.Extensions.Options;
@@ -25,7 +26,7 @@ namespace EShopData.Menus
 
             while (!exit)
             {
-                var cartItems = cartService.GetAll();
+                var cartItems = cartService.GetCartItemsDetails();
 
                 var output = new StringBuilder();
                 output.AppendLine("Produscts in cart:");
@@ -57,7 +58,7 @@ namespace EShopData.Menus
 
         public void RemoveProduct()
         {
-            var cartItems = cartService.GetAll();
+            var cartItems = cartService.GetCartItemsDetails();
 
             var result = consoleHelper.ShowArrowMenu("Chose product to remove:",
                 cartItems.Select(ci => FormatCartItem(ci)).ToArray());
@@ -75,7 +76,7 @@ namespace EShopData.Menus
                 cartService.Clear();
             }
         }
-        private static string FormatCartItem(CartItem item)
+        private static string FormatCartItem(CartItemDetailsDto item)
         {
             return $"{item.ProductName} x{item.Quantity}  Price: {item.Quantity * item.Price:C}";
         }

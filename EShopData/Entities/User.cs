@@ -14,5 +14,6 @@ namespace EShopData.Entities
         public DateTime CreatedAt { get; set; }
         public UserInfo UserInfo { get; set; }
         public ICollection<Order> Orders { get; set; }
+        public Cart? Cart { get; set; }
     }
 }

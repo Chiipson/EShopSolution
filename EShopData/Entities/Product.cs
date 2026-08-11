@@ -16,5 +16,6 @@ namespace EShopData.Entities
         public Producer Producer { get; set; }
         public ICollection<OrderItem> OrderItems { get; set; }
         public ICollection<Tag> Tags { get; set; }
+        public ICollection<CartItem> CartItems { get; set; }
     }
 }

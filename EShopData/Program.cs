@@ -32,7 +32,7 @@ namespace EShopData
                 services.AddTransient<CartMenu>();
 
                 services.AddTransient<ProductService>();
-                services.AddSingleton<CartService>();
+                services.AddTransient<CartService>();
                 services.AddTransient<UserService>();
 
                 services.AddTransient<PasswordHasher>();

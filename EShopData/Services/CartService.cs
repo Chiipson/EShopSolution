@@ -1,5 +1,9 @@
-﻿using EShopData.DTOs;
+﻿using EShopData.Data;
+using EShopData.DTOs;
+using EShopData.Entities;
 using EShopData.Models;
+using EShopData.Security;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,44 +12,121 @@ namespace EShopData.Services
 {
     public class CartService
     {
-        private readonly List<CartItem> cartItems = new();
+        private readonly EShopDbContext context;
+        private readonly UserSession session;
 
-        public void Add(AddToCartDto item)
+        public CartService(EShopDbContext context, UserSession session)
         {
-            var cartItem = cartItems.Find(ci=>ci.ProductId == item.ProductId);
+            this.context = context;
+            this.session = session;
+        }
+
+        public void Add(int productId)
+        {
+            if (!session.IsLoggenIn())
+            {
+                throw new Exception();
+            }
+
+            var cart = context.Carts
+                .Include(c => c.CartItems)
+                .FirstOrDefault(c => c.UserId == session.User.Id);
+
+            if (cart == null)
+            {
+                cart = new Cart
+                {
+                    UserId = session.User.Id,
+                    CartItems = new List<CartItem>()
+                };
+                context.Carts.Add(cart);
+            }
+
+            var cartItem = cart.CartItems.FirstOrDefault(ci => ci.ProductId == productId);
 
             if (cartItem == null)
             {
-                cartItems.Add(new CartItem()
+                cart.CartItems.Add(new CartItem()
                 {
-                    ProductId = item.ProductId,
-                    ProductName = item.Name,
-                    Quantity = 1,
-                    Price = item.Price
+                    ProductId = productId,
+                    Quantity = 1
                 });
-            }else
-            {
-                cartItem.IncreaseQuantity();
             }
+            else
+            {
+                cartItem.Quantity++;
+            }
+
+            context.SaveChanges();
         }
-        public IReadOnlyList<CartItem> GetAll()
+
+        public List<CartItemDetailsDto> GetCartItemsDetails()
         {
-            return cartItems;
+            var cart = context.Carts
+                .Include(c => c.CartItems)
+                    .ThenInclude(ci => ci.Product)
+                .FirstOrDefault(c => c.UserId == session.User.Id);
+
+            if (cart == null)
+            {
+                return new List<CartItemDetailsDto>();
+            }
+
+            return cart.CartItems.Select(ci => new CartItemDetailsDto(
+                ci.ProductId,
+                ci.Product.Name,
+                ci.Quantity,
+                ci.Product.Price
+                )).ToList();
         }
 
         public void Clear()
         {
-            cartItems.Clear();
+            if (!session.IsLoggenIn())
+            {
+                throw new Exception();
+            }
+
+            var cart = context.Carts
+                .Include(c => c.CartItems)
+                .FirstOrDefault(c => c.UserId == session.User.Id);
+
+            if(cart == null)
+            {
+                return;
+            }
+
+            context.CartItems.RemoveRange(cart.CartItems);
+
+            context.SaveChanges();
         }
 
-        public void RemoveProduct(int id)
+        public void RemoveProduct(int productId)
         {
-            var item = cartItems.Find(ci=>ci.ProductId == id);
-
-            if (item != null)
+            if (!session.IsLoggenIn())
             {
-                cartItems.Remove(item);
+                throw new Exception();
             }
+
+            var cart = context.Carts
+                .Include(c => c.CartItems)
+                .FirstOrDefault(c => c.UserId == session.User.Id);
+
+            if (cart == null)
+            {
+                return;
+            }
+
+            var cartItem = cart.CartItems.FirstOrDefault(ci => ci.ProductId == productId);
+
+            if( cartItem == null)
+            {
+                return;
+            }
+
+            context.CartItems.Remove(cartItem);
+            
+            context.SaveChanges();
         }
     }
 }
