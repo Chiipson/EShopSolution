@@ -1,6 +1,7 @@
 ﻿using EShopData.Common;
 using EShopData.DTOs;
 using EShopData.Models;
+using EShopData.Security;
 using EShopData.Services;
 using Microsoft.Extensions.Options;
 using System;
@@ -13,11 +14,18 @@ namespace EShopData.Menus
     {
         private readonly CartService cartService;
         private readonly ConsoleHelper consoleHelper;
+        private readonly CheckoutService checkoutService;
+        private readonly UserSession session;
 
-        public CartMenu(CartService cartService, ConsoleHelper consoleHelper)
+        public CartMenu(CartService cartService, 
+            ConsoleHelper consoleHelper, 
+            CheckoutService checkoutService, 
+            UserSession session)
         {
             this.cartService = cartService;
             this.consoleHelper = consoleHelper;
+            this.checkoutService = checkoutService;
+            this.session = session;
         }
 
         public void Show()
@@ -53,7 +61,20 @@ namespace EShopData.Menus
 
         public void Checkout()
         {
-            //TODO:check out
+            if(session.IsLoggedIn())
+            {
+                checkoutService.Checkout();
+
+                Console.Clear();
+                Console.WriteLine("Order was successfully added");
+            }
+            else
+            {
+                Console.Clear();
+                Console.WriteLine("You must log in before checking out");
+            }
+
+            Thread.Sleep(2000);
         }
 
         public void RemoveProduct()

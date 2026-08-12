@@ -23,7 +23,7 @@ namespace EShopData.Services
 
         public void Add(int productId, int amount)
         {
-            if (session.IsLoggenIn())
+            if (session.IsLoggedIn())
             {
                 var cart = context.Carts
                     .Include(c => c.CartItems)
@@ -74,7 +74,7 @@ namespace EShopData.Services
 
         public List<CartItemDetailsDto> GetCartItemsDetails()
         {
-            if (!session.IsLoggenIn())
+            if (!session.IsLoggedIn())
             {
                 return session.GuestCart.Join(
                     context.Products,
@@ -108,7 +108,7 @@ namespace EShopData.Services
 
         public void Clear()
         {
-            if (!session.IsLoggenIn())
+            if (session.IsLoggedIn())
             {
                 var cart = context.Carts
                     .Include(c => c.CartItems)
@@ -131,7 +131,7 @@ namespace EShopData.Services
 
         public void RemoveProduct(int productId)
         {
-            if (session.IsLoggenIn())
+            if (session.IsLoggedIn())
             {
                 var cart = context.Carts
                     .Include(c => c.CartItems)

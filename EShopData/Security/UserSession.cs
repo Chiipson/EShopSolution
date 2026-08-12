@@ -10,7 +10,7 @@ namespace EShopData.Security
     {
         public UserSessionDto? User { get; private set; }
         public List<GuestCartItem> GuestCart { get; } = new();
-        public bool IsLoggenIn() => User != null;
+        public bool IsLoggedIn() => User != null;
 
         public void Login(UserSessionDto userSessionDto)
         {
