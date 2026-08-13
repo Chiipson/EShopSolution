@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace EShopData.DTOs
+namespace EShopData.DTOs.Product
 {
     public record ProductsNamesListDto(
         int Id,

@@ -1,5 +1,6 @@
 ﻿using EShopData.Common;
 using EShopData.DTOs;
+using EShopData.DTOs.User;
 using EShopData.Models;
 using EShopData.Security;
 using EShopData.Services;
@@ -42,7 +43,7 @@ namespace EShopData.Menus
             var menu = new List<MenuItem>
             {
                new ("Show all products",productMenu.ShowAllProducts),
-               new ("Search products",()=>Console.WriteLine("Todo:Search")),
+               new ("Search products",productMenu.SearchMenu),
                new ("View cart",cartMenu.Show)
             };
 

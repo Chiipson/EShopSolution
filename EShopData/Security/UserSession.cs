@@ -1,4 +1,4 @@
-﻿using EShopData.DTOs;
+﻿using EShopData.DTOs.User;
 using EShopData.Models;
 using System;
 using System.Collections.Generic;

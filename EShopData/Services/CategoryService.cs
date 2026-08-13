@@ -1,4 +1,5 @@
 ﻿using EShopData.Data;
+using EShopData.DTOs.Category;
 using EShopData.Entities;
 using System;
 using System.Collections.Generic;
@@ -15,10 +16,13 @@ namespace EShopData.Services
             _context = context;
         }
 
-        public Category GetById(int id) => _context.Categories.Find(id);
-
-        public Category GetByName(string name) => _context.Categories.Single(c => c.Name == name);
-
-        public IEnumerable<Category> GetAll() => _context.Categories.ToList();
+        public List<CategoryNamesDto> GetCategoryList() => 
+            _context.Categories
+                .Select(c=> 
+                    new CategoryNamesDto(
+                        c.Id,
+                        c.Name
+                    ))
+                .ToList();
     }
 }

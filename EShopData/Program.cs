@@ -37,6 +37,7 @@ namespace EShopData
                 services.AddTransient<UserService>();
                 services.AddTransient<CheckoutService>();
                 services.AddTransient<OrderService>();
+                services.AddTransient<CategoryService>();
 
                 services.AddTransient<PasswordHasher>();
                 services.AddSingleton<UserSession>();

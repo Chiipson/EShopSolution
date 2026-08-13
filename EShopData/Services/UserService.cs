@@ -1,5 +1,6 @@
 ﻿using EShopData.Data;
 using EShopData.DTOs;
+using EShopData.DTOs.User;
 using EShopData.Entities;
 using EShopData.Enums;
 using EShopData.Security;

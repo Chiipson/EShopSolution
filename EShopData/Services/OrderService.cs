@@ -1,5 +1,5 @@
 ﻿using EShopData.Data;
-using EShopData.DTOs;
+using EShopData.DTOs.Order;
 using EShopData.Security;
 using System;
 using System.Collections.Generic;

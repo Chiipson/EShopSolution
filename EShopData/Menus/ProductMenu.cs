@@ -1,5 +1,6 @@
 ﻿using EShopData.Common;
-using EShopData.DTOs;
+using EShopData.DTOs.Product;
+using EShopData.Models;
 using EShopData.Services;
 using System;
 using System.Collections.Generic;
@@ -11,33 +12,46 @@ namespace EShopData.Menus
     {
         private readonly ProductService productService;
         private readonly CartService cartService;
+        private readonly CategoryService categoryService;
         private readonly ConsoleHelper consoleHelper;
 
-        public ProductMenu(ProductService productService, ConsoleHelper consoleHelper, CartService cartService)
+        public ProductMenu(
+            ProductService productService, 
+            ConsoleHelper consoleHelper, 
+            CartService cartService, 
+            CategoryService categoryService
+            )
         {
             this.productService = productService;
             this.consoleHelper = consoleHelper;
             this.cartService = cartService;
+            this.categoryService = categoryService;
         }
 
         public void ShowAllProducts()
         {
             var products = productService.GetProductList();
 
-            var position = consoleHelper.ShowArrowMenu(
-                "Products",
-                products
-                    .Select(p => $"{p.Id}.{p.Name}")
-                    .Append("Back")
-                    .ToArray()
-                );
+            ShowProducts(products);
+        }
 
-            if(position>=products.Count)
+        public void SearchMenu()
+        {
+            var exit = false;
+
+            var menu = new List<MenuItem>
             {
-                return;
-            }
+                new("By name", SearchByName),
+                new("By category", SearchByCategory),
+                new("Back", ()=> exit=true)
+            };
 
-            ShowProductDetails(productService.GetProductDetails(products[position].Id));
+            while (!exit)
+            {
+                var choice = consoleHelper.ShowArrowMenu("Search options:", menu.Select(m => m.Name).ToArray());
+
+                menu[choice].Action();
+            }
         }
 
         public void ShowProductDetails(ProductDetailsDto product)
@@ -57,10 +71,50 @@ namespace EShopData.Menus
 
             var option = consoleHelper.ShowArrowMenu(title, ["yes", "no"]);
 
-            if(option == 0)
+            if (option == 0)
             {
                 cartService.Add(product.id, 1);
             }
+        }
+
+        private void ShowProducts(List<ProductsNamesListDto> products)
+        {
+            var position = consoleHelper.ShowArrowMenu(
+                "Products",
+                products
+                    .Select(p => $"{p.Name}")
+                    .Append("Back")
+                    .ToArray()
+                );
+
+            if (position >= products.Count)
+            {
+                return;
+            }
+
+            ShowProductDetails(productService.GetProductDetails(products[position].Id));
+        }
+
+        private void SearchByName()
+        {
+            Console.Clear();
+
+            var partOfProductName = consoleHelper.GetString("Enter product name:");
+
+            var products = productService.GetProductListByName(partOfProductName);
+
+            ShowProducts(products);
+        }
+
+        private void SearchByCategory()
+        {
+            var categories = categoryService.GetCategoryList();
+
+            var choice = consoleHelper.ShowArrowMenu("Choose category:", categories.Select(c => c.Name).ToArray());
+
+            var products = productService.GetProductListByCategory(categories[choice].Id);
+
+            ShowProducts(products);
         }
     }
 }

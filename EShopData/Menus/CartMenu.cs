@@ -1,5 +1,5 @@
 ﻿using EShopData.Common;
-using EShopData.DTOs;
+using EShopData.DTOs.Cart;
 using EShopData.Models;
 using EShopData.Security;
 using EShopData.Services;
