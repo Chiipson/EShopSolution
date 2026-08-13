@@ -16,13 +16,15 @@ namespace EShopData.Menus
         private readonly CartMenu cartMenu;
         private readonly UserService userService;
         private readonly UserSession session;
+        private readonly OrderMenu orderMenu;
 
         public UserMenu(
             ConsoleHelper consoleHelper,
             ProductMenu productMenu,
             CartMenu cartMenu,
             UserService userService,
-            UserSession session
+            UserSession session,
+            OrderMenu orderMenu
             )
         {
             this.consoleHelper = consoleHelper;
@@ -30,6 +32,7 @@ namespace EShopData.Menus
             this.cartMenu = cartMenu;
             this.userService = userService;
             this.session = session;
+            this.orderMenu = orderMenu;
         }
 
         public void Show()
@@ -45,14 +48,19 @@ namespace EShopData.Menus
 
             string welcomeMessage;
 
-            if (session.IsLoggenIn())
+            if (session.IsLoggedIn())
             {
                 welcomeMessage = $"Welcome, {session.User.FirstName} {session.User.LastName}";
 
                 menu.AddRange
                     ([
                         new("Account info", () => { }),
-                        new("Logout",()=>{ }),
+                        new("Order history", orderMenu.ShowOrderHistory),
+                        new("Logout",()=>
+                        {
+                            userService.Logout();
+                            exit = true;
+                        }),
                      ]);
             }
             else
@@ -69,7 +77,7 @@ namespace EShopData.Menus
             }
         }
 
-        public void Login()
+        public bool Login()
         {
             Console.Clear();
 
@@ -78,17 +86,7 @@ namespace EShopData.Menus
             var email = consoleHelper.GetString("Enter email:");
             var password = consoleHelper.GetString("Enter password:");
 
-            Console.Clear();
-            if (userService.LogIn(email, password))
-            {
-                Console.WriteLine("Login success");
-                Show();
-            }
-            else
-            {
-                Console.WriteLine("Login fails");
-            }
-            Thread.Sleep(1000);
+            return userService.LogIn(email, password);
         }
 
         public void Register()

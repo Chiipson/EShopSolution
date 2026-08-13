@@ -30,11 +30,13 @@ namespace EShopData
                 services.AddTransient<UserMenu>();
                 services.AddTransient<ProductMenu>();
                 services.AddTransient<CartMenu>();
+                services.AddTransient<OrderMenu>();
 
                 services.AddTransient<ProductService>();
                 services.AddTransient<CartService>();
                 services.AddTransient<UserService>();
                 services.AddTransient<CheckoutService>();
+                services.AddTransient<OrderService>();
 
                 services.AddTransient<PasswordHasher>();
                 services.AddSingleton<UserSession>();
