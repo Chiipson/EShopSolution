@@ -4,6 +4,7 @@ using EShopData.DTOs.User;
 using EShopData.Entities;
 using EShopData.Enums;
 using EShopData.Security;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -88,6 +89,25 @@ namespace EShopData.Services
             context.SaveChanges();
 
             return true;
+        }
+
+        public UserInfoDto GetCurrentUserInfo()
+        {
+            if(!session.IsLoggedIn())
+            {
+                throw new InvalidOperationException("User isn't logged in.");
+            }
+
+            var user = context.Users
+                .Where(u => u.Id == session.User.Id)
+                .Select(u => new UserInfoDto(
+                    u.Email,
+                    u.UserInfo.FirstName,
+                    u.UserInfo.LastName
+                ))
+                .FirstOrDefault();
+
+            return user == null ? throw new InvalidOperationException("User not found.") : user;
         }
     }
 }

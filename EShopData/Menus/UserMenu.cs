@@ -6,6 +6,7 @@ using EShopData.Security;
 using EShopData.Services;
 using System;
 using System.Collections.Generic;
+using System.Runtime.ExceptionServices;
 using System.Text;
 
 namespace EShopData.Menus
@@ -55,7 +56,7 @@ namespace EShopData.Menus
 
                 menu.AddRange
                     ([
-                        new("Account info", () => { }),
+                        new("Account info", ShowAccountInfo),
                         new("Order history", orderMenu.ShowOrderHistory),
                         new("Logout",()=>
                         {
@@ -119,6 +120,24 @@ namespace EShopData.Menus
                 Console.WriteLine("Registration fails");
             }
             Thread.Sleep(1000);
+        }
+
+        public void ShowAccountInfo()
+        {
+            var userInfo = userService.GetCurrentUserInfo();
+
+            Console.Clear();
+
+            var output =
+                $"""
+                Account informamation:
+
+                First name: {userInfo.FirstName}
+                LastName:   {userInfo.LastName}
+                Email:      {userInfo.Email}
+                """;
+
+            consoleHelper.ShowArrowMenu(output, ["back"]);
         }
     }
 }
