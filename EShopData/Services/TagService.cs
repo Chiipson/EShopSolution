@@ -16,7 +16,7 @@ namespace EShopData.Services
         }
 
         public List<IdNameDto> GetTagList() =>
-            _context.Categories
+            _context.Tags
                 .Select(c =>
                     new IdNameDto(
                         c.Id,

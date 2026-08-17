@@ -16,7 +16,7 @@ namespace EShopData.Services
         }
 
         public List<IdNameDto> GetProducerList() =>
-            _context.Categories
+            _context.Producers
                 .Select(c =>
                     new IdNameDto(
                         c.Id,

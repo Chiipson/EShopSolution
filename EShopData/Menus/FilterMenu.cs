@@ -46,6 +46,8 @@ namespace EShopData.Menus
             {
                 new("Price", ()=>
                 {
+                    Console.Clear();
+
                     filterOptions.PriceLowerBound = consoleHelper.GetDecimal("Enter lower bound of price:");
                     filterOptions.PriceUpperBound = consoleHelper.GetDecimal("Enter upper bound of price:");
                 }),
