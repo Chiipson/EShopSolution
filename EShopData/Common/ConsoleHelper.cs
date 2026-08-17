@@ -6,9 +6,9 @@ namespace EShopData.Common
 {
     public class ConsoleHelper
     {
-        public int ShowArrowMenu(string title,string[] options)
+        public int ShowArrowMenu(string title,string[] options, int arrowPosition = 0)
         {
-            int chosenRow = 0;
+            int chosenRow = arrowPosition;
 
             while (true)
             {

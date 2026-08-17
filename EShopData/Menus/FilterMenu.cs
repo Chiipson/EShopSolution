@@ -103,6 +103,7 @@ namespace EShopData.Menus
         private bool[] ShowCheckBoxMenu(string title, IEnumerable<string> options, bool[] chosenOptions)
         {
             var exit = false;
+            var arrowPosition = 0;
 
             while (!exit)
             {
@@ -112,7 +113,8 @@ namespace EShopData.Menus
                         options
                             .Select((option, index) => $"{(chosenOptions[index] ? "[x]" : "[ ]")} {option}")
                             .Append("Back")
-                            .ToArray()
+                            .ToArray(),
+                        arrowPosition
                         );
 
                 if (chosen < options.Count())
@@ -123,6 +125,8 @@ namespace EShopData.Menus
                 {
                     exit = true;
                 }
+
+                arrowPosition = chosen;
             }
 
             return chosenOptions;
