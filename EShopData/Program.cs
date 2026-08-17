@@ -31,6 +31,7 @@ namespace EShopData
                 services.AddTransient<ProductMenu>();
                 services.AddTransient<CartMenu>();
                 services.AddTransient<OrderMenu>();
+                services.AddTransient<FilterMenu>();
 
                 services.AddTransient<ProductService>();
                 services.AddTransient<CartService>();
@@ -38,6 +39,8 @@ namespace EShopData
                 services.AddTransient<CheckoutService>();
                 services.AddTransient<OrderService>();
                 services.AddTransient<CategoryService>();
+                services.AddTransient<ProducerService>();
+                services.AddTransient<TagService>();
 
                 services.AddTransient<PasswordHasher>();
                 services.AddSingleton<UserSession>();

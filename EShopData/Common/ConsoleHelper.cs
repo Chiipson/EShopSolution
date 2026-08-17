@@ -60,5 +60,18 @@ namespace EShopData.Common
             Console.Write(message);
             return Console.ReadLine();
         }
+
+        public decimal GetDecimal(string message)
+        {
+            decimal number = 0;
+            var exit = false;
+            while (!exit)
+            {
+                Console.Write(message);
+                exit = decimal.TryParse(Console.ReadLine(), out number);
+            }
+
+            return number;
+        }
     }
 }

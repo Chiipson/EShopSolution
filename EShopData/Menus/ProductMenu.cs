@@ -14,18 +14,21 @@ namespace EShopData.Menus
         private readonly CartService cartService;
         private readonly CategoryService categoryService;
         private readonly ConsoleHelper consoleHelper;
+        private readonly FilterMenu filterMenu;
 
         public ProductMenu(
             ProductService productService, 
             ConsoleHelper consoleHelper, 
             CartService cartService, 
-            CategoryService categoryService
+            CategoryService categoryService,
+            FilterMenu filterMenu
             )
         {
             this.productService = productService;
             this.consoleHelper = consoleHelper;
             this.cartService = cartService;
             this.categoryService = categoryService;
+            this.filterMenu = filterMenu;
         }
 
         public void ShowAllProducts()
@@ -52,6 +55,20 @@ namespace EShopData.Menus
 
                 menu[choice].Action();
             }
+        }
+
+        public void FilterMenu()
+        {
+            var filterOptions = filterMenu.Show();
+
+            if(filterOptions == null)
+            {
+                return;
+            }
+
+            var products = productService.GetFilteredProducts(filterOptions);
+
+            ShowProducts(products);
         }
 
         public void ShowProductDetails(ProductDetailsDto product)

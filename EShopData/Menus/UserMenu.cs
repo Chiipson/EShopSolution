@@ -45,6 +45,7 @@ namespace EShopData.Menus
             {
                new ("Show all products",productMenu.ShowAllProducts),
                new ("Search products",productMenu.SearchMenu),
+               new("Show filter products", productMenu.FilterMenu),
                new ("View cart",cartMenu.Show)
             };
 

@@ -1,24 +1,23 @@
 ﻿using EShopData.Data;
 using EShopData.DTOs;
-using EShopData.Entities;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace EShopData.Services
 {
-    public class CategoryService
+    public class TagService
     {
         private readonly EShopDbContext _context;
 
-        public CategoryService(EShopDbContext context)
+        public TagService(EShopDbContext context)
         {
             _context = context;
         }
 
-        public List<IdNameDto> GetCategoryList() => 
+        public List<IdNameDto> GetTagList() =>
             _context.Categories
-                .Select(c=> 
+                .Select(c =>
                     new IdNameDto(
                         c.Id,
                         c.Name

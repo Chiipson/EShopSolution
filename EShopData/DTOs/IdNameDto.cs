@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace EShopData.DTOs.Category
+namespace EShopData.DTOs
 {
-    public record CategoryNamesDto(
+    public record IdNameDto(
         int Id,
         string Name
         );
