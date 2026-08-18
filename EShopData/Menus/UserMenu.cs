@@ -20,6 +20,8 @@ namespace EShopData.Menus
         private readonly UserSession session;
         private readonly OrderMenu orderMenu;
 
+        private bool exitFromUserMenu = false;
+
         public UserMenu(
             ConsoleHelper consoleHelper,
             ProductMenu productMenu,
@@ -39,7 +41,7 @@ namespace EShopData.Menus
 
         public void Show()
         {
-            var exit = false;
+            exitFromUserMenu = false;
 
             var menu = new List<MenuItem>
             {
@@ -59,25 +61,27 @@ namespace EShopData.Menus
                     ([
                         new("Account info", ShowAccountInfo),
                         new("Order history", orderMenu.ShowOrderHistory),
-                        new("Logout",()=>
-                        {
-                            userService.Logout();
-                            exit = true;
-                        }),
+                        new("Logout", Logout),
                      ]);
             }
             else
             {
                 welcomeMessage = "Welcome, Guest";
 
-                menu.Add(new("Back", () => exit = true));
+                menu.Add(new("Back", () => exitFromUserMenu = true));
             }
 
-            while (!exit)
+            while (!exitFromUserMenu)
             {
                 var selected = consoleHelper.ShowArrowMenu(welcomeMessage, menu.Select(mi => mi.Name).ToArray());
                 menu[selected].Action();
             }
+        }
+
+        public void Logout()
+        {
+            userService.Logout();
+            exitFromUserMenu = true;
         }
 
         public bool Login()
@@ -125,20 +129,56 @@ namespace EShopData.Menus
 
         public void ShowAccountInfo()
         {
-            var userInfo = userService.GetCurrentUserInfo();
+            var exit = false;
 
-            Console.Clear();
+            var menu = new List<MenuItem>
+            {
+                new("Change profile info", ()=>
+                {
+                    Console.Clear();
 
-            var output =
-                $"""
+                    var newFirstName = consoleHelper.GetString("New first name:");
+                    var newLastName = consoleHelper.GetString("New last name:");
+
+                    userService.EditUserInfo(new EditUserInfoDto(newFirstName, newLastName));
+                }),
+                new("Change Password", ()=>
+                {
+                    Console.Clear();
+
+                    var newPassword = consoleHelper.GetString("Enter new password:");
+
+                    userService.ChangePassword(newPassword);
+                }),
+                new("Delete profile", ()=>
+                {
+                    userService.DeleteUser(session.User.Id);
+                    Logout();
+                    exit = true;
+                }),
+                new("Back", ()=>{exit = true;}),
+            };
+
+
+            while (!exit)
+            {
+                var userInfo = userService.GetCurrentUserInfo();
+
+                var output =
+                    $"""
                 Account informamation:
 
                 First name: {userInfo.FirstName}
                 LastName:   {userInfo.LastName}
                 Email:      {userInfo.Email}
+
+                Options:
                 """;
 
-            consoleHelper.ShowArrowMenu(output, ["back"]);
+                var chose = consoleHelper.ShowArrowMenu(output, menu.Select(m => m.Name).ToArray());
+
+                menu[chose].Action();
+            }
         }
     }
 }

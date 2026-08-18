@@ -19,9 +19,9 @@ namespace EShopData.Services
         private readonly CartService cartService;
 
         public UserService(
-            EShopDbContext context, 
-            PasswordHasher passwordHasher, 
-            UserSession session, 
+            EShopDbContext context,
+            PasswordHasher passwordHasher,
+            UserSession session,
             CartService cartService
             )
         {
@@ -93,7 +93,7 @@ namespace EShopData.Services
 
         public UserInfoDto GetCurrentUserInfo()
         {
-            if(!session.IsLoggedIn())
+            if (!session.IsLoggedIn())
             {
                 throw new InvalidOperationException("User isn't logged in.");
             }
@@ -108,6 +108,62 @@ namespace EShopData.Services
                 .FirstOrDefault();
 
             return user == null ? throw new InvalidOperationException("User not found.") : user;
+        }
+
+        public void DeleteUser(int userId)
+        {
+            var user = context.Users.Find(userId);
+
+            if (user != null)
+            {
+
+                context.Users.Remove(user);
+
+                context.SaveChanges();
+            }
+        }
+
+        public bool ChangePassword(string newPassword)
+        {
+            if (!session.IsLoggedIn())
+            {
+                return false;
+            }
+
+            var user = context.Users.Find(session.User.Id);
+
+            if (user == null)
+            {
+                return false;
+            }
+
+            user.PasswordHash = passwordHasher.Hash(newPassword);
+
+            context.SaveChanges();
+
+            return true;
+        }
+
+        public bool EditUserInfo(EditUserInfoDto newUserInfo)
+        {
+            if (!session.IsLoggedIn())
+            {
+                return false;
+            }
+
+            var userInfo = context.UserInfos.FirstOrDefault(ui => ui.UserId == session.User.Id);
+
+            if(userInfo == null)
+            {
+                return false;
+            }
+
+            userInfo.FirstName = newUserInfo.FirstName;
+            userInfo.LastName = newUserInfo.LastName;
+
+            context.SaveChanges();
+
+            return true;
         }
     }
 }
