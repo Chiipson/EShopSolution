@@ -99,7 +99,7 @@ namespace EShopData.Menus
         }
         private static string FormatCartItem(CartItemDetailsDto item)
         {
-            return $"{item.ProductName} x{item.Quantity}  Price: {item.Quantity * item.Price:C}";
+            return $"{item.ProductName} x{item.Quantity}  Price: {item.Quantity * item.Price}";
         }
     }
 }

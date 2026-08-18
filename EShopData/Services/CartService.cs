@@ -62,7 +62,7 @@ namespace EShopData.Services
 
                 if (item == null)
                 {
-                    item = new GuestCartItem { ProductId = productId, Quantity = 1 };
+                    item = new GuestCartItem { ProductId = productId, Quantity = amount };
                     session.GuestCart.Add(item);
                 }
                 else

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Numerics;
 using System.Text;
 
 namespace EShopData.Common
@@ -61,17 +63,16 @@ namespace EShopData.Common
             return Console.ReadLine();
         }
 
-        public decimal GetDecimal(string message)
+        public T GetNumber<T>(string message) where T : INumber<T>
         {
-            decimal number = 0;
-            var exit = false;
-            while (!exit)
+            while (true)
             {
                 Console.Write(message);
-                exit = decimal.TryParse(Console.ReadLine(), out number);
+                if(T.TryParse(Console.ReadLine(), CultureInfo.InvariantCulture, out T number))
+                {
+                    return number;
+                }
             }
-
-            return number;
         }
     }
 }

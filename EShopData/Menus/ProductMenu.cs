@@ -83,14 +83,18 @@ namespace EShopData.Menus
                 Tags: {string.Join(",", product.Tags)}
                 Price: {product.Price}
 
-                Add to cart:
+                Options:
                 """;
 
-            var option = consoleHelper.ShowArrowMenu(title, ["yes", "no"]);
+            var option = consoleHelper.ShowArrowMenu(title, ["Add to cart", "back"]);
 
             if (option == 0)
             {
-                cartService.Add(product.id, 1);
+                Console.Clear();
+
+                var number = consoleHelper.GetNumber<int>("Enter number of product:");
+
+                cartService.Add(product.id, number);
             }
         }
 

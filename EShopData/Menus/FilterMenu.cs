@@ -48,8 +48,8 @@ namespace EShopData.Menus
                 {
                     Console.Clear();
 
-                    filterOptions.PriceLowerBound = consoleHelper.GetDecimal("Enter lower bound of price:");
-                    filterOptions.PriceUpperBound = consoleHelper.GetDecimal("Enter upper bound of price:");
+                    filterOptions.PriceLowerBound = consoleHelper.GetNumber<decimal>("Enter lower bound of price:");
+                    filterOptions.PriceUpperBound = consoleHelper.GetNumber<decimal>("Enter upper bound of price:");
                 }),
                 new("Category", ()=>
                 {
@@ -65,7 +65,7 @@ namespace EShopData.Menus
                         tagIdsNames.Select(t=>t.Name),
                         chosenTags);
                 }),
-                new("Producer", ()=>
+                new("Producer\n", ()=>
                 {
                     chosenProducers = ShowCheckBoxMenu(
                         "Producer: ",
