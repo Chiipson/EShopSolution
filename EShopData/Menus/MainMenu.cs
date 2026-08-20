@@ -11,12 +11,19 @@ namespace EShopData.Menus
     {
         private readonly ConsoleHelper consoleHelper;
         private readonly UserMenu userMenu;
+        private readonly AdministratorMenu administratorMenu;
         private readonly UserSession userSession;
 
-        public MainMenu(ConsoleHelper consoleHelper, UserMenu userMenu, UserSession userSession)
+        public MainMenu(
+            ConsoleHelper consoleHelper, 
+            UserMenu userMenu,
+            AdministratorMenu administratorMenu, 
+            UserSession userSession
+            )
         {
             this.consoleHelper = consoleHelper;
             this.userMenu = userMenu;
+            this.administratorMenu = administratorMenu;
             this.userSession = userSession;
         }
         public void Show()
@@ -34,11 +41,12 @@ namespace EShopData.Menus
                        }
                        else
                        {
-                           //Todo Admin
+                           administratorMenu.Show();
                        }
                     }
                     else
                     {
+                       Thread.Sleep(1000);
                        Console.WriteLine("Fail");
                     }
                    }),
