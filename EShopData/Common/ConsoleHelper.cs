@@ -57,6 +57,15 @@ namespace EShopData.Common
             }
         }
 
+        public void PrintUserMessage(string massage, int durationInSeconds)
+        {
+            Console.Clear();
+
+            Console.WriteLine(massage);
+
+            Thread.Sleep(durationInSeconds * 1000);
+        }
+
         public string GetString(string message)
         {
             Console.Write(message);

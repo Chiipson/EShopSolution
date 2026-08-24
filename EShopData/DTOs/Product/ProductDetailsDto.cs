@@ -8,6 +8,7 @@ namespace EShopData.DTOs.Product
         int id,
         string Name,
         decimal Price,
+        int StockQuantity,
         string CategoryName,
         string ProducerName,
         IEnumerable<string> Tags

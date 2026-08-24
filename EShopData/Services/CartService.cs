@@ -6,6 +6,8 @@ using EShopData.Security;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
+using System.Runtime.Intrinsics.X86;
 using System.Text;
 
 namespace EShopData.Services
@@ -21,8 +23,20 @@ namespace EShopData.Services
             this.session = session;
         }
 
-        public void Add(int productId, int amount)
+        public bool Add(int productId, int amount)
         {
+            if (amount <= 0)
+            {
+                return false;
+            }
+
+            var product = context.Products.FirstOrDefault(p => p.Id == productId);
+
+            if (product == null)
+            {
+                return false;
+            }
+
             if (session.IsLoggedIn())
             {
                 var cart = context.Carts
@@ -43,6 +57,11 @@ namespace EShopData.Services
 
                 if (cartItem == null)
                 {
+                    if (amount > product.StockQuantity)
+                    {
+                        return false;
+                    }
+
                     cart.CartItems.Add(new CartItem()
                     {
                         ProductId = productId,
@@ -51,7 +70,12 @@ namespace EShopData.Services
                 }
                 else
                 {
-                    cartItem.Quantity+= amount;
+                    if (amount + cartItem.Quantity > product.StockQuantity)
+                    {
+                        return false;
+                    }
+
+                    cartItem.Quantity += amount;
                 }
 
                 context.SaveChanges();
@@ -62,14 +86,26 @@ namespace EShopData.Services
 
                 if (item == null)
                 {
+                    if (amount > product.StockQuantity)
+                    {
+                        return false;
+                    }
+
                     item = new GuestCartItem { ProductId = productId, Quantity = amount };
                     session.GuestCart.Add(item);
                 }
                 else
                 {
-                    item.Quantity++;
+                    if (amount + item.Quantity > product.StockQuantity)
+                    {
+                        return false;
+                    }
+
+                    item.Quantity += amount;
                 }
             }
+
+            return true;
         }
 
         public List<CartItemDetailsDto> GetCartItemsDetails()
@@ -166,14 +202,62 @@ namespace EShopData.Services
             }
         }
 
-        public void MergeUserAndGuestcarts()
+        public void MergeUserAndGuestCarts()
         {
+            if (!session.IsLoggedIn())
+            {
+                throw new InvalidOperationException("User is not logged in");
+            }
+
+            var cart = context.Carts
+                .Include(c => c.CartItems)
+                .FirstOrDefault(c => c.UserId == session.User.Id);
+
+            if (cart == null)
+            {
+                cart = new Cart
+                {
+                    UserId = session.User.Id,
+                    CartItems = new List<CartItem>()
+                };
+                context.Carts.Add(cart);
+            }
+
             foreach (var item in session.GuestCart)
             {
-                Add(item.ProductId, item.Quantity);
+                var product = context.Products.Find(item.ProductId);
+
+                var userCartItem = cart.CartItems.FirstOrDefault(ci=>ci.ProductId == item.ProductId);
+
+                if(userCartItem != null)
+                {
+                    var available = product.StockQuantity - userCartItem.Quantity;
+
+                    var quantityToAdd = Math.Min(item.Quantity, available);
+
+                    if (quantityToAdd > 0)
+                    {
+                        userCartItem.Quantity += quantityToAdd;
+                    }
+                }
+                else
+                {
+                    var quantity = Math.Min(item.Quantity, product.StockQuantity);
+
+                    if (quantity > 0)
+                    {
+                        cart.CartItems.Add(new CartItem
+                        {
+                            ProductId = item.ProductId,
+                            Quantity = quantity
+                        });
+                    }
+                }
             }
 
             session.GuestCart.Clear();
+
+            context.SaveChanges();
         }
     }
 }

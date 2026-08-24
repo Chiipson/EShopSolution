@@ -49,6 +49,13 @@ namespace EShopData.Services
 
             context.Orders.Add(order);
 
+            foreach (var item in cartItems)
+            {
+                var product = context.Products.Find(item.ProductId);
+
+                product.StockQuantity -= item.Quantity;
+            }
+
             context.SaveChanges();
 
             cartService.Clear();

@@ -17,9 +17,9 @@ namespace EShopData.Menus
         private readonly FilterMenu filterMenu;
 
         public ProductMenu(
-            ProductService productService, 
-            ConsoleHelper consoleHelper, 
-            CartService cartService, 
+            ProductService productService,
+            ConsoleHelper consoleHelper,
+            CartService cartService,
             CategoryService categoryService,
             FilterMenu filterMenu
             )
@@ -61,7 +61,7 @@ namespace EShopData.Menus
         {
             var filterOptions = filterMenu.Show();
 
-            if(filterOptions == null)
+            if (filterOptions == null)
             {
                 return;
             }
@@ -73,6 +73,13 @@ namespace EShopData.Menus
 
         public void ShowProductDetails(ProductDetailsDto product)
         {
+            var availability = product.StockQuantity switch
+            {
+                <= 0 => "Out of stock",
+                <= 5 => $"Only {product.StockQuantity} left",
+                _ => "In stock"
+            };
+
             var title =
                 $"""
                 Chosen product
@@ -82,6 +89,7 @@ namespace EShopData.Menus
                 Category: {product.CategoryName}
                 Tags: {string.Join(",", product.Tags)}
                 Price: {product.Price}
+                Availability: {availability}
 
                 Options:
                 """;
@@ -94,7 +102,14 @@ namespace EShopData.Menus
 
                 var number = consoleHelper.GetNumber<int>("Enter number of product:");
 
-                cartService.Add(product.id, number);
+                if (cartService.Add(product.id, number))
+                {
+                    consoleHelper.PrintUserMessage("The products were added to cart.", 3);
+                }
+                else
+                {
+                    consoleHelper.PrintUserMessage("The products weren't added to cart.\nNot enough items in stock", 3);
+                }
             }
         }
 

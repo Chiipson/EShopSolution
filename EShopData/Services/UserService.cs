@@ -55,7 +55,7 @@ namespace EShopData.Services
                 user.Role
                 ));
 
-            cartService.MergeUserAndGuestcarts();
+            cartService.MergeUserAndGuestCarts();
 
             return true;
         }

@@ -55,6 +55,7 @@ namespace EShopData.Services
                         p.Id,
                         p.Name,
                         p.Price,
+                        p.StockQuantity,
                         p.Category.Name,
                         p.Producer.Name,
                         p.Tags.Select(t => t.Name)
