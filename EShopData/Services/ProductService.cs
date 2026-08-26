@@ -11,15 +11,15 @@ namespace EShopData.Services
 {
     public class ProductService
     {
-        private readonly EShopDbContext _context;
+        private readonly EShopDbContext context;
 
         public ProductService(EShopDbContext context)
         {
-            _context = context;
+            this.context = context;
         }
 
         public List<ProductsNamesListDto> GetProductList() =>
-            _context.Products
+            context.Products
                 .Select(p =>
                     new ProductsNamesListDto(
                         p.Id,
@@ -28,7 +28,7 @@ namespace EShopData.Services
                 .ToList();
 
         public List<ProductsNamesListDto> GetProductListByName(string productName) =>
-            _context.Products
+            context.Products
                 .Where(p => EF.Functions.ILike(p.Name, $"%{productName}%"))
                 .Select(p =>
                     new ProductsNamesListDto(
@@ -38,7 +38,7 @@ namespace EShopData.Services
                 .ToList();
 
         public List<ProductsNamesListDto> GetProductListByCategory(int categoryId) =>
-            _context.Products
+            context.Products
                 .Where(p => p.CategoryId == categoryId)
                 .Select(p =>
                     new ProductsNamesListDto(
@@ -48,7 +48,7 @@ namespace EShopData.Services
                 .ToList();
 
         public ProductDetailsDto GetProductDetails(int id) =>
-           _context.Products
+           context.Products
                 .Where(p => p.Id == id)
                 .Select(p =>
                     new ProductDetailsDto(
@@ -64,7 +64,7 @@ namespace EShopData.Services
 
         public List<ProductsNamesListDto> GetFilteredProducts(FilterOptions filterOptions)
         {
-            var query = _context.Products.AsQueryable();
+            var query = context.Products.AsQueryable();
 
             if (filterOptions.PriceUpperBound != null)
             {
@@ -97,6 +97,76 @@ namespace EShopData.Services
                         p.Name
                     ))
                 .ToList();
+        }
+
+        public void AddProduct(AddProductDto newProduct)
+        {
+            var tags = context.Tags.Where(t => newProduct.TagIds.Contains(t.Id)).ToList();
+
+            var product = new Product
+            {
+                Name = newProduct.Name,
+                CategoryId = newProduct.CategoryId,
+                ProducerId = newProduct.ProducerId,
+                Price = newProduct.Price,
+                StockQuantity = newProduct.StockQuantity,
+                Tags = tags
+            };
+
+            context.Products.Add(product);
+
+            context.SaveChanges();
+        }
+
+        public void DeleteProduct(int productId)
+        {
+            var product = context.Products.Find(productId);
+
+            if (product != null)
+            {
+                context.Products.Remove(product);
+
+                context.SaveChanges();
+            }
+        }
+
+        public void UpdateProduct(int productId, EditProductDto editProductDto)
+        {
+            var product = context.Products.Find(productId);
+
+            if (product == null)
+            {
+                throw new InvalidOperationException("Product not found");
+            }
+
+            if (editProductDto.Name != null)
+            {
+                product.Name = editProductDto.Name;
+            }
+
+            if (editProductDto.Price.HasValue)
+            {
+                product.Price = editProductDto.Price.Value;
+            }
+
+            if (editProductDto.CategoryId.HasValue)
+            {
+                product.CategoryId = editProductDto.CategoryId.Value;
+            }
+
+            if (editProductDto.ProducerId.HasValue)
+            {
+                product.ProducerId = editProductDto.ProducerId.Value;
+            }
+
+            if(editProductDto.TagIds != null)
+            {
+                var tags = context.Tags.Where(t => editProductDto.TagIds.Contains(t.Id)).ToList();
+
+                product.Tags = tags;
+            }
+
+            context.SaveChanges();
         }
     }
 }
