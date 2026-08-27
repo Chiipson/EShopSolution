@@ -2,6 +2,7 @@
 using EShopData.Data;
 using EShopData.Data.Seed;
 using EShopData.Menus;
+using EShopData.Menus.Admin;
 using EShopData.Security;
 using EShopData.Services;
 using Microsoft.EntityFrameworkCore;
@@ -33,6 +34,7 @@ namespace EShopData
                 services.AddTransient<OrderMenu>();
                 services.AddTransient<FilterMenu>();
                 services.AddTransient<AdministratorMenu>();
+                services.AddTransient<ProductBrowser>();
 
                 services.AddTransient<ProductService>();
                 services.AddTransient<CartService>();

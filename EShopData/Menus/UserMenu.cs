@@ -15,6 +15,7 @@ namespace EShopData.Menus
     {
         private readonly ConsoleHelper consoleHelper;
         private readonly ProductMenu productMenu;
+        private readonly ProductBrowser productBrowser;
         private readonly CartMenu cartMenu;
         private readonly UserService userService;
         private readonly UserSession session;
@@ -25,6 +26,7 @@ namespace EShopData.Menus
         public UserMenu(
             ConsoleHelper consoleHelper,
             ProductMenu productMenu,
+            ProductBrowser productBrowser,
             CartMenu cartMenu,
             UserService userService,
             UserSession session,
@@ -33,6 +35,7 @@ namespace EShopData.Menus
         {
             this.consoleHelper = consoleHelper;
             this.productMenu = productMenu;
+            this.productBrowser = productBrowser;
             this.cartMenu = cartMenu;
             this.userService = userService;
             this.session = session;
@@ -45,9 +48,9 @@ namespace EShopData.Menus
 
             var menu = new List<MenuItem>
             {
-               new ("Show all products",productMenu.ShowAllProducts),
-               new ("Search products",productMenu.SearchMenu),
-               new("Show filter products", productMenu.FilterMenu),
+               new ("Show all products",()=>productBrowser.ShowAllProducts(productMenu.ShowProductDetails)),
+               new ("Search products",()=>productBrowser.SearchMenu(productMenu.ShowProductDetails)),
+               new("Show filter products",()=>productBrowser.ShowFilteredProducts(productMenu.ShowProductDetails)),
                new ("View cart",cartMenu.Show)
             };
 
