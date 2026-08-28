@@ -49,6 +49,7 @@ namespace EShopData
                 services.AddSingleton<UserSession>();
 
                 services.AddTransient<ConsoleHelper>();
+                services.AddTransient<ConvertingHelper>();
             });
 
             hostBuilder.ConfigureLogging(logging =>

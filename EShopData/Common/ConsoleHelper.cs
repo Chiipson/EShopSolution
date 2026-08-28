@@ -57,6 +57,37 @@ namespace EShopData.Common
             }
         }
 
+        public bool[] ShowCheckBoxMenu(string title, string executeButtonName, IEnumerable<string> options, bool[] chosenOptions)
+        {
+            var exit = false;
+            var arrowPosition = 0;
+
+            while (!exit)
+            {
+                var chosen = ShowArrowMenu(
+                        title,
+                        options
+                            .Select((option, index) => $"{(chosenOptions[index] ? "[x]" : "[ ]")} {option}")
+                            .Append(executeButtonName)
+                            .ToArray(),
+                        arrowPosition
+                        );
+
+                if (chosen < options.Count())
+                {
+                    chosenOptions[chosen] = !chosenOptions[chosen];
+                }
+                else
+                {
+                    exit = true;
+                }
+
+                arrowPosition = chosen;
+            }
+
+            return chosenOptions;
+        }
+
         public void PrintUserMessage(string massage, int durationInSeconds)
         {
             Console.Clear();

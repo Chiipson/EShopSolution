@@ -14,18 +14,21 @@ namespace EShopData.Menus
         private readonly CategoryService categoryService;
         private readonly TagService tagService;
         private readonly ProducerService producerService;
+        private readonly ConvertingHelper convertingHelper;
 
         public FilterMenu(
             ConsoleHelper consoleHelper,
             CategoryService categoryService,
             TagService tagService,
-            ProducerService producerService
+            ProducerService producerService,
+            ConvertingHelper convertingHelper
             )
         {
             this.consoleHelper = consoleHelper;
             this.categoryService = categoryService;
             this.tagService = tagService;
             this.producerService = producerService;
+            this.convertingHelper = convertingHelper;
         }
 
         public FilterOptions? Show()
@@ -53,33 +56,37 @@ namespace EShopData.Menus
                 }),
                 new("Category", ()=>
                 {
-                    chosenCategories = ShowCheckBoxMenu(
+                    chosenCategories = consoleHelper.ShowCheckBoxMenu(
                         "Categories: ",
+                        "Back",
                         categoryIdsNames.Select(c=>c.Name),
                         chosenCategories);
                 }),
                 new("Tag", ()=>
                 {
-                    chosenTags = ShowCheckBoxMenu(
+                    chosenTags = consoleHelper.ShowCheckBoxMenu(
                         "Tags: ",
+                        "Back",
                         tagIdsNames.Select(t=>t.Name),
-                        chosenTags);
+                        chosenTags
+                        );
                 }),
                 new("Producer\n", ()=>
                 {
-                    chosenProducers = ShowCheckBoxMenu(
+                    chosenProducers = consoleHelper.ShowCheckBoxMenu(
                         "Producer: ",
+                        "Back",
                         producerIdsNames.Select(p=>p.Name),
                         chosenProducers);
                 }),
                 new("Apply filtration", ()=>
                 {
                     filterOptions.TagIds = 
-                        GetIdsOfChosenOptions(chosenTags, tagIdsNames.Select(t=>t.Id).ToArray());
-                    filterOptions.CategoryIds = 
-                        GetIdsOfChosenOptions(chosenCategories, categoryIdsNames.Select(c=>c.Id).ToArray());
-                    filterOptions.ProducerIds = 
-                        GetIdsOfChosenOptions(chosenProducers, producerIdsNames.Select(p=>p.Id).ToArray());
+                        convertingHelper.GetIdsOfChosenOptions(chosenTags, tagIdsNames.Select(t=>t.Id).ToArray());
+                    filterOptions.CategoryIds =
+                        convertingHelper.GetIdsOfChosenOptions(chosenCategories, categoryIdsNames.Select(c=>c.Id).ToArray());
+                    filterOptions.ProducerIds =
+                        convertingHelper.GetIdsOfChosenOptions(chosenProducers, producerIdsNames.Select(p=>p.Id).ToArray());
 
                     exit = true;
                 }),
@@ -98,53 +105,6 @@ namespace EShopData.Menus
             }
 
             return filterOptions;
-        }
-
-        private bool[] ShowCheckBoxMenu(string title, IEnumerable<string> options, bool[] chosenOptions)
-        {
-            var exit = false;
-            var arrowPosition = 0;
-
-            while (!exit)
-            {
-                var chosen = consoleHelper
-                    .ShowArrowMenu(
-                        title,
-                        options
-                            .Select((option, index) => $"{(chosenOptions[index] ? "[x]" : "[ ]")} {option}")
-                            .Append("Back")
-                            .ToArray(),
-                        arrowPosition
-                        );
-
-                if (chosen < options.Count())
-                {
-                    chosenOptions[chosen] = !chosenOptions[chosen];
-                }
-                else
-                {
-                    exit = true;
-                }
-
-                arrowPosition = chosen;
-            }
-
-            return chosenOptions;
-        }
-
-        private List<int> GetIdsOfChosenOptions(bool[] chosenOptions, int[] allIds)
-        {
-            var ids = new List<int>();
-
-            for (int i = 0; i < chosenOptions.Length; i++)
-            {
-                if (chosenOptions[i])
-                {
-                    ids.Add(allIds[i]);
-                }
-            }
-
-            return ids;
         }
     }
 }
