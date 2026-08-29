@@ -35,6 +35,7 @@ namespace EShopData
                 services.AddTransient<FilterMenu>();
                 services.AddTransient<AdministratorMenu>();
                 services.AddTransient<ProductBrowser>();
+                services.AddTransient<AdminProductMenu>();
 
                 services.AddTransient<ProductService>();
                 services.AddTransient<CartService>();
