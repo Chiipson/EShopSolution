@@ -46,10 +46,10 @@ the shop.
 ### Administrator *(in progress)*
 
 - [x] Login as administrator
-- [ ] Manage products
-- [ ] Add products
-- [ ] Edit products
-- [ ] Delete products
+- [x] Manage products
+- [x] Add products
+- [x] Edit products
+- [x] Delete products
 - [ ] Manage users
 - [ ] Manage orders
 
