@@ -130,13 +130,13 @@ namespace EShopData.Services
             }
         }
 
-        public void UpdateProduct(int productId, EditProductDto editProductDto)
+        public bool UpdateProduct(int productId, EditProductDto editProductDto)
         {
             var product = context.Products.Find(productId);
 
             if (product == null)
             {
-                throw new InvalidOperationException("Product not found");
+                return false;
             }
 
             if (editProductDto.Name != null)
@@ -161,12 +161,39 @@ namespace EShopData.Services
 
             if(editProductDto.TagIds != null)
             {
+                context.Entry(product)
+                    .Collection(p => p.Tags)
+                    .Load();
+
                 var tags = context.Tags.Where(t => editProductDto.TagIds.Contains(t.Id)).ToList();
 
                 product.Tags = tags;
             }
 
             context.SaveChanges();
+
+            return true;
+        }
+
+        public bool SetQuantity(int productId, int newQuantity)
+        {
+            if(newQuantity < 0)
+            {
+                return false;
+            }
+
+            var product = context.Products.Find(productId);
+
+            if (product == null)
+            {
+                return false;
+            }
+
+            product.StockQuantity = newQuantity;
+
+            context.SaveChanges();
+
+            return true;
         }
     }
 }

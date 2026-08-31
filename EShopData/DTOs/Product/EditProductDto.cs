@@ -4,11 +4,12 @@ using System.Text;
 
 namespace EShopData.DTOs.Product
 {
-    public record EditProductDto(
-        string? Name,
-        decimal? Price,
-        int? CategoryId,
-        int? ProducerId,
-        List<int>? TagIds
-        );
+    public class EditProductDto
+    {
+        public string? Name {  get; set; }
+        public decimal? Price { get; set; }
+        public int? CategoryId { get; set; }
+        public int? ProducerId { get; set; }
+        public List<int>? TagIds { get; set; }
+    }
 }
